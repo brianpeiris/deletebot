@@ -1,0 +1,17 @@
+{
+  "name": "deletebot",
+  "description": "deletebot is a Slack bot that deletes messages for you",
+  "repository": "https://github.com/brianpeiris/deletebot",
+  "success_url": "/",
+  "env": {
+    "HEROKU_APP_NAME": {
+      "required": true
+    },
+    "SLACK_TOKEN": {
+      "description": "Slack bot RTM API token",
+      "required": false
+    },
+    "NODE_ENV": "staging"
+  },
+  "image": "heroku/nodejs"
+}
