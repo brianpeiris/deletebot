@@ -14,6 +14,8 @@ bot.message((msg) => {
   if (msg.type !== 'message') { return; }
   if (!msg.user) { return; }
 
+  console.info('got message', JSON.stringify(msg));
+
   var token = config('SLACK_TOKEN');
   slack.channels.info({token: token, channel: msg.channel}, function (err, data) {
     if (err) { console.error('Could not get channel info', msg.channel, err); return }
