@@ -16,11 +16,11 @@ bot.message((msg) => {
 
   var token = config('SLACK_TOKEN');
   slack.channels.info({token: token, channel: msg.channel}, function (err, data) {
-    if (err) { console.error('Could not get channel info', err); }
+    if (err) { console.error('Could not get channel info', msg.channel, err); return }
 
     if (config('CHANNELS').split(' ').indexOf(data.channel.name) === -1) { return; }
     slack.users.info({token: token, user: msg.user}, function (err, data) {
-      if (err) { console.error('Could not get user info', err); }
+      if (err) { console.error('Could not get user info', msg.user, err); }
 
       if (config('ALLOWED_USERS').split(' ').indexOf(data.user.name) !== -1) { return; }
       console.info('Deleting message', JSON.stringify(msg));
