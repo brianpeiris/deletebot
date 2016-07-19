@@ -56,3 +56,6 @@ To https://git.heroku.com/blooming-scrubland-64464.git
 
 $ heroku open
 ```
+### Credits
+
+Based on https://github.com/mattcreager/starbot
