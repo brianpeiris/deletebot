@@ -1,33 +1,34 @@
-
 'use strict'
 
 const slack = require('slack')
 const _ = require('lodash')
 const config = require('./config')
 
-let bot = slack.rtm.client()
+let bot = slack.rtm.client();
 
 bot.started((payload) => {
   this.self = payload.self
 })
 
 bot.message((msg) => {
-  if (!msg.user) return
-  if (!_.includes(msg.text.match(/<@([A-Z0-9])+>/igm), `<@${this.self.id}>`)) return
+  if (msg.type !== 'message') { return; }
+  if (!msg.user) { return; }
 
-  slack.chat.postMessage({
-    token: config('SLACK_TOKEN'),
-    icon_emoji: config('ICON_EMOJI'),
-    channel: msg.channel,
-    username: 'Starbot',
-    text: `beep boop: I hear you loud and clear!"`
-  }, (err, data) => {
-    if (err) throw err
+  var token = config('SLACK_TOKEN');
+  slack.channels.info({token: token, channel: msg.channel}, function (err, data) {
+    if (err) { console.error('Could not get channel info', err); }
 
-    let txt = _.truncate(data.message.text)
+    if (config('CHANNELS').split(' ').indexOf(data.channel.name) === -1) { return; }
+    slack.users.info({token: token, user: msg.user}, function (err, data) {
+      if (err) { console.error('Could not get user info', err); }
 
-    console.log(`🤖  beep boop: I responded with "${txt}"`)
-  })
+      if (config('ALLOWED_USERS').split(' ').indexOf(data.user.name) !== -1) { return; }
+      console.info('Deleting message', JSON.stringify(msg));
+      slack.chat.delete({token: token, ts: msg.ts, channel: msg.channel, as_user: true}, function (err, data) {
+        if (err) { console.error('Could not delete message', err); }
+      });
+    });
+  });
 })
 
 module.exports = bot
